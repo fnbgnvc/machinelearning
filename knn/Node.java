@@ -17,13 +17,10 @@ package knn;
 %  	13)Proline
  */
 public class Node {
-public int[] attributes;
-
-    
-    
+public double[] attributes;
+public void setAttributes(double[] a){
+    this.attributes=a;
 }
-
-class TrainingNode extends Node{
-    public int classification;
-
+public int classification;
+public void setClassification(int a){this.classification=a;}
 }
