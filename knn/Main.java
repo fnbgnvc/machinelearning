@@ -18,3 +18,7 @@ each instance in the test set (the second file name) according to the training s
  */
 
 //first: read files
+
+/**
+ * euclidian distance calc: d(a,b)= sqrt(sum((ai-bi)^2/Rangei^2))
+ */

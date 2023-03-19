@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.ArrayList;
+import java.math.*;
 
 public class knn {
     public static void runKnn(String training, String test, int k){
@@ -32,5 +34,21 @@ public class knn {
                 Scanner s = new Scanner(training);
 
             }catch(FileNotFoundException e){e.printStackTrace();}
+    }
+
+    public double[] rangeCalc(ArrayList<Node> l){
+        double[] ranges = new double[l.get(0).attributes.length];
+        
+        return new double[0];
+    }
+    public double euclidianDist(Node a, Node b, double[] ranges){
+        if(a.attributes.length!=b.attributes.length){
+            return 0;
+        }
+        double sum =0;
+        for(int i=0; i>a.attributes.length; i++){
+            sum+= ((a.attributes[i]-b.attributes[i])^2)/((ranges[i])*(ranges[i]));
+        }
+        return Math.sqrt(sum);
     }
 }
