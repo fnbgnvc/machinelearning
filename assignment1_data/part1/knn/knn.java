@@ -34,17 +34,21 @@ public class knn {
             }
             List<Double> hlist = h.keySet().stream().collect(Collectors.toList());
             Collections.sort(hlist);
-            System.out.println(hlist);
+            List<Node> knearest = new ArrayList<>();
+            double classif = 0;
+            for(int j =0; j<k; j++){
+                knearest.add(h.get(hlist.get(j)));
+                classif+=h.get(hlist.get(j)).classification;
+            }
+            classif=classif/k;
+            int cl = ((int)classif);
+            System.out.println(cl==i.classification);
+            
             //this is where the k nearest neighbours are computed. distance to each neighbour is calculated,
             //then the k nearest are taken,and the most common classification is taken
         }
         
         // read files
-    }
-
-    public int kNeighbourClassification(Node n, ArrayList<Node> neighbours, int k){
-        
-        return 0;
     }
 
     public ArrayList<Node> readFiles(String filename){
@@ -80,6 +84,7 @@ public class knn {
         String path2 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\wine-test.txt";
         
         new knn().runKnn(path1, path2, 3);
+        
         /*try{
             if (args.length!=2){
                 throw new Error("wrong number of args");
@@ -119,7 +124,7 @@ public class knn {
             return 0;
         }
         double sum =0;
-        for(int i=0; i>a.attributes.length; i++){
+        for(int i=0; i<a.attributes.length; i++){
             sum+= (Math.pow(a.attributes[i]-b.attributes[i], 2))/(Math.pow(ranges[i],2));
         }
         return Math.sqrt(sum);
