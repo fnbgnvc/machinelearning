@@ -2,29 +2,37 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 public class BuildTree {
-
-    BuildTree(String trainingData, String testData){
-        readDataFile(trainingData);
-    }
-    public static void main(String[] args){
-        if(args.length==2){
-            String trainingData = args[0];
-            String testData = args[1];
-            new BuildTree(trainingData, testData);
-
-        }
-    }
-
+    
     int numCategories;
     int numAtts;
     Set<String> categoryNames;
     List<String> attNames;
     List<Instance> allInstances;
+    Node root;
+
+    BuildTree(String trainingData, String testData){
+        readDataFile(trainingData);
+        root = buildTree(allInstances, attNames);
+        root.report("");
+    }
+    public static void main(String[] args){
+        String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-training.txt";
+        String testData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-test.txt";
+        new BuildTree(trainingData, testData);
+        /*if(args.length==2){
+            String trainingData = args[0];
+            String testData = args[1];
+            new BuildTree(trainingData, testData);
+
+        }*/
+    }
+
 
     void readDataFile(String fname) {
         /* format of names file:
@@ -35,14 +43,14 @@ public class BuildTree {
         try {
             Scanner din = new Scanner(new File(fname));
 
-            attNames = new ArrayList<>();
+            this.attNames = new ArrayList<>();
             Scanner s = new Scanner(din.nextLine());
             // Skip the "Class" attribute.
             s.next();
             while (s.hasNext()) {
                 attNames.add(s.next());
             }
-            numAtts = attNames.size();
+            this.numAtts = attNames.size();
             System.out.println(numAtts + " attributes");
 
             allInstances = readInstances(din);
@@ -74,9 +82,11 @@ public class BuildTree {
         return instances;
     }
 
-    public Node buildTree(Set<Instance> instances, List<String> attributes){
+    public Node buildTree(List<Instance> instances, List<String> attributes){
         if(instances.size()==0){
-            //return leaf node containing name and probability of most probable class across whole training set
+            return new LeafNode();
+            //return leaf node containing name 
+            //and probability of most probable class across whole training set
         }
         //else if: instances all belong to same class
         //return leaf node that contains name of the class and prob 1
@@ -96,6 +106,17 @@ public class BuildTree {
          * return node containing (bestatt, left, right)
          */
         return null;
+    }
+    private void baseline(){
+        HashMap<String, Integer> m = new HashMap<String,Integer>();
+        for(String c : categoryNames){
+            m.put(c,0);
+        }
+        for(Instance i : allInstances){
+            m.replace(i.category, m.get(i.category)+1);
+        }
+        
+
     }
 }
     
