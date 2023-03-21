@@ -25,7 +25,7 @@ public class knn {
         ArrayList<Node> trainNodes = readFiles(training);
         ArrayList<Node> testNodes = readFiles(test);
         double[] ranges = rangeCalc(trainNodes);
-        
+        double accuracy = 0;
         for(Node i : testNodes){
             HashMap<Double, Node> h = new HashMap<>();
             for(Node j : trainNodes){
@@ -42,11 +42,13 @@ public class knn {
             }
             classif=classif/k;
             int cl = ((int)classif);
-            System.out.println(cl==i.classification);
+            //System.out.println(cl==i.classification);
+            if(cl==i.classification){accuracy++;}
             
             //this is where the k nearest neighbours are computed. distance to each neighbour is calculated,
             //then the k nearest are taken,and the most common classification is taken
         }
+        System.out.println("Accuracy=" + (accuracy/(testNodes.size()))*100 + "%");
         
         // read files
     }
@@ -83,7 +85,7 @@ public class knn {
         String path1 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\wine-training.txt";
         String path2 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\wine-test.txt";
         
-        new knn().runKnn(path1, path2, 3);
+        new knn().runKnn(path1, path2, 1);
         
         /*try{
             if (args.length!=2){
