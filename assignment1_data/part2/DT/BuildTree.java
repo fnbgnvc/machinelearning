@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 public class BuildTree {
     
     int numCategories;
     int numAtts;
-    Set<String> categoryNames;
+    List<String> categoryNames;
     List<String> attNames;
     List<Instance> allInstances;
     Node root;
@@ -20,11 +21,12 @@ public class BuildTree {
 
     BuildTree(String trainingData, String testData){
         readDataFile(trainingData);
+        baseline();
         root = buildTree(allInstances, attNames);
         root.report("");
     }
     public static void main(String[] args){
-        String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-training.txt";
+        String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\hepatitis-training.txt";
         String testData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-test.txt";
         new BuildTree(trainingData, testData);
         /*if(args.length==2){
@@ -59,7 +61,7 @@ public class BuildTree {
             allInstances = readInstances(din);
             din.close();
 
-            categoryNames = new HashSet<>();
+            categoryNames = new ArrayList<String>();
             for (Instance i : allInstances) {
                 categoryNames.add(i.category);
             }
@@ -86,8 +88,9 @@ public class BuildTree {
     }
 
     public Node buildTree(List<Instance> instances, List<String> attributes){
-        if(instances.size()==0){
-            baseline();
+        List<String> myAtts = new ArrayList<String>();
+        myAtts.addAll(attributes);
+        if(instances.isEmpty()){
             return new LeafNode(baselineCategory, baselineProbability);
             //return leaf node containing name 
             //and probability of most probable class across whole training set
@@ -96,6 +99,21 @@ public class BuildTree {
                     //else if: instances all belong to same class
         //return leaf node that contains name of the class and prob 1
             return new LeafNode(instances.get(0).getCategory(), 1);
+        }
+        else if(attributes.isEmpty()){
+            //name and probability of majority class of instances
+			int[] tally = {(int)instances.stream().filter(a->a.getCategory().equals(instances.get(0).getCategory())).count(),
+                (int)instances.stream().filter(a->!a.getCategory().equals(instances.get(0).getCategory())).count()};
+			int numOccuring = 0;
+			String category = null;
+			for (int i = 0; i < tally.length; i++) {
+				if (tally[i] > numOccuring) {
+					numOccuring = tally[i];
+					category = categoryNames.get(i);
+				}
+			}
+			return new LeafNode(category, numOccuring
+					/ (double) instances.size());
         }
         else{
                  /* else find best attribute:
@@ -107,7 +125,7 @@ public class BuildTree {
             List<Instance> bestInstsTrue = new ArrayList<Instance>();
             List<Instance> bestInstsFalse = new ArrayList<Instance>();
             String best = "";
-            for(String att: attributes){
+            for(String att: myAtts){
                 List<Instance> sTrue = new ArrayList<Instance>();
                 List<Instance> sFalse = new ArrayList<Instance>();
                 for(Instance i : instances){
@@ -115,6 +133,9 @@ public class BuildTree {
                         sTrue.add(i);
                     }
                     else{sFalse.add(i);}
+                }
+                if(sTrue.isEmpty() || sFalse.isEmpty()){
+
                 }
                 double wavg = weightedPBI(sTrue, sFalse);
                 if(wavg>bestPBI){
@@ -137,27 +158,36 @@ public class BuildTree {
             * right = buildtree(bestinstsfalse, attributes without bestAttr)
             * return node containing (bestatt, left, right)
             */
-            attributes.remove(best);
-            Node left = buildTree(bestInstsTrue, attributes);
-            Node right = buildTree(bestInstsFalse, attributes);
+            myAtts.remove(best);
+            Node left = buildTree(bestInstsTrue, myAtts);
+            Node right = buildTree(bestInstsFalse, myAtts);
             return new SplitNode(best, left, right);
         }
     }
+
+    
     private double weightedPBI(List<Instance> instLeft, List<Instance> instRight){
         if(instLeft.size()==0||instRight.size()==0){
             return 0;
         }
+        double totalInstance = instLeft.size()+instRight.size();
         String cat1 = instLeft.get(0).getCategory();
-        double m = instLeft.stream().filter(a -> a.getCategory().equals(cat1)).count();
-        double n = instLeft.size()-m;
-        double PBIL = (m*n)/Math.pow(n+m, 2);
-        m = instRight.stream().filter(a -> a.getCategory().equals(cat1)).count();
-        n = instRight.size()-m;
-        double PBIR = (m*n)/Math.pow(n+m, 2);
-        double nL = instLeft.size()/(instLeft.size()+instRight.size());
-        double nR = instRight.size()/(instLeft.size()+instRight.size());
 
-        double wAvg = (nL*PBIL)+(nR*PBIR);
+        double count1L = instLeft.stream().filter(a -> a.getCategory().equals(cat1)).count();
+        double count2L = instLeft.stream().filter(a -> !a.getCategory().equals(cat1)).count();
+
+        double impurityL = (count1L / (double) instLeft.size())*(count2L/(double) instLeft.size());    
+
+        double count1R = instRight.stream().filter(a -> a.getCategory().equals(cat1)).count();
+        double count2R = instRight.stream().filter(a -> !a.getCategory().equals(cat1)).count();
+
+        double impurityR = (count1R / (double) instRight.size())*(count2R/(double) instRight.size()); 
+        //weighted impurity
+        double wimpL = impurityL*(instLeft.size()/totalInstance);
+        double wimpR = impurityR*(instRight.size()/totalInstance);
+
+
+        double wAvg = wimpL+wimpR;
         return wAvg;
 
         /* wAvg(PBI)= N(L)xPBI(L) + N(R)xPBI(R)
@@ -184,7 +214,7 @@ public class BuildTree {
             m.replace(i.category, m.get(i.category)+1);
         }
         String baselineCat = "";
-        int mostCommon = Integer.MIN_VALUE;
+        double mostCommon = Double.MIN_VALUE;
         for(String i: categoryNames){
             if(m.get(i)>mostCommon){
                 baselineCat=i;
@@ -192,9 +222,7 @@ public class BuildTree {
             }
         }
         this.baselineCategory = baselineCat;
-        this.baselineProbability= mostCommon/allInstances.size();
-        
-
+        this.baselineProbability= mostCommon/m.entrySet().stream().mapToInt(a ->a.getValue()).sum();
     }
 }
     
