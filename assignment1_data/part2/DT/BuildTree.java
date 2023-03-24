@@ -26,7 +26,7 @@ public class BuildTree {
         root.report("");
     }
     public static void main(String[] args){
-        String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\hepatitis-training.txt";
+        String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-training.txt";
         String testData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-test.txt";
         new BuildTree(trainingData, testData);
         /*if(args.length==2){

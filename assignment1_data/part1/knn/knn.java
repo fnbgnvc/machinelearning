@@ -26,7 +26,8 @@ public class knn {
         ArrayList<Node> testNodes = readFiles(test);
         double[] ranges = rangeCalc(trainNodes);
         double accuracy = 0;
-        for(Node i : testNodes){
+        for(int c=0; c<testNodes.size(); c++){
+            Node i = testNodes.get(c);
             HashMap<Double, Node> h = new HashMap<>();
             for(Node j : trainNodes){
                 double dist = euclidianDist(i, j, ranges);
@@ -34,19 +35,20 @@ public class knn {
             }
             List<Double> hlist = h.keySet().stream().collect(Collectors.toList());
             Collections.sort(hlist);
-            List<Node> knearest = new ArrayList<>();
-            double classif = 0;
+            List<Node> knearest = new ArrayList<Node>();
+            int[] clasf = new int[4];
+  
             for(int j =0; j<k; j++){
                 knearest.add(h.get(hlist.get(j)));
-                classif+=h.get(hlist.get(j)).classification;
+                clasf[h.get(hlist.get(j)).classification]++;
             }
-            classif=classif/k;
-            int cl = ((int)classif);
-            //System.out.println(cl==i.classification);
-            if(cl==i.classification){accuracy++;}
+            int max = 0;
+            int classif = 0;
+            for(int l = 0; l< clasf.length; l++){
+                if(clasf[l]>max){max=clasf[l]; classif=l;}
+            }
+            if(classif==i.classification){accuracy++;}
             
-            //this is where the k nearest neighbours are computed. distance to each neighbour is calculated,
-            //then the k nearest are taken,and the most common classification is taken
         }
         System.out.println("Accuracy=" + (accuracy/(testNodes.size()))*100 + "%");
         
@@ -54,9 +56,6 @@ public class knn {
     }
 
     public ArrayList<Node> readFiles(String filename){
-        File file = new File(filename);
-        System.out.println(file.getAbsolutePath());
-
         File f = new File(filename);
         ArrayList<Node> nodes = new ArrayList<>();
         try{
@@ -81,21 +80,18 @@ public class knn {
 
     public static void main(String[] args) throws Exception{
         
-        
-        String path1 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\wine-training.txt";
-        String path2 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\wine-test.txt";
-        
-        new knn().runKnn(path1, path2, 1);
-        
-        /*try{
+        try{
             if (args.length!=2){
                 throw new Error("wrong number of args");
             }
-            new knn().runKnn(args[0], args[1], 3);
+            String path1 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[0];
+            String path2 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[1];
+            
+            new knn().runKnn(path1, path2, 3);
         }
         catch(Error e){
             e.printStackTrace();    
-            System.exit(0);}*/
+            System.exit(0);}
     }
 
     
