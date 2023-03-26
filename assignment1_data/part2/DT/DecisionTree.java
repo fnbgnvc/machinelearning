@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-public class BuildTree {
+public class DecisionTree {
     
     int numCategories;
     int numAtts;
@@ -19,22 +19,21 @@ public class BuildTree {
     String baselineCategory;
     double baselineProbability;
 
-    BuildTree(String trainingData, String testData){
+    DecisionTree(String trainingData, String testData){
         readDataFile(trainingData);
         baseline();
         root = buildTree(allInstances, attNames);
         root.report("");
+        readDataFile(testData);
+        testClassify();
     }
     public static void main(String[] args){
-        String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-training.txt";
-        String testData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\golf-test.txt";
-        new BuildTree(trainingData, testData);
-        /*if(args.length==2){
-            String trainingData = args[0];
-            String testData = args[1];
-            new BuildTree(trainingData, testData);
+        if(args.length==2){
+            String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\" + args[0];
+            String testData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\" + args[1];
+            new DecisionTree(trainingData, testData);
 
-        }*/
+        }
     }
 
 
@@ -63,7 +62,8 @@ public class BuildTree {
 
             categoryNames = new ArrayList<String>();
             for (Instance i : allInstances) {
-                categoryNames.add(i.category);
+                if(!categoryNames.contains(i.category)){categoryNames.add(i.category);}
+                
             }
             numCategories = categoryNames.size();
             System.out.println(numCategories + " categories");
@@ -121,10 +121,10 @@ public class BuildTree {
                  * separate instances into 2 sets: true & false for the attribute
                  * (attributes are held in instance as list of booleans)
                  * */
-            double bestPBI = Double.MIN_VALUE;
+            double bestPBI = Integer.MIN_VALUE;
             List<Instance> bestInstsTrue = new ArrayList<Instance>();
             List<Instance> bestInstsFalse = new ArrayList<Instance>();
-            String best = "";
+            String best = baselineCategory;
             for(String att: myAtts){
                 List<Instance> sTrue = new ArrayList<Instance>();
                 List<Instance> sFalse = new ArrayList<Instance>();
@@ -144,20 +144,7 @@ public class BuildTree {
                     bestInstsFalse=sFalse;
                     best = att;
                 }
-
-                /* 
-                 * compute purity
-
-                 * if weighted average purity of the 2 is best so far:
-                 * best att=this att
-                 * bestInstsTrue = set of true instances
-                 * bestInstsFalse = set of false instances*/
             }
-            /* 
-            * then left=buildtree(bestinststrue, attributes without bestAttr)
-            * right = buildtree(bestinstsfalse, attributes without bestAttr)
-            * return node containing (bestatt, left, right)
-            */
             myAtts.remove(best);
             Node left = buildTree(bestInstsTrue, myAtts);
             Node right = buildTree(bestInstsFalse, myAtts);
@@ -198,7 +185,7 @@ public class BuildTree {
     private boolean allInstancesMatch(List<Instance> instances){
         for(Instance i : instances){
             for(Instance j :instances){
-                if(i.getCategory()!=j.getCategory()){
+                if(!i.getCategory().equals(j.getCategory())){
                     return false;
                 }
             }
@@ -223,6 +210,47 @@ public class BuildTree {
         }
         this.baselineCategory = baselineCat;
         this.baselineProbability= mostCommon/m.entrySet().stream().mapToInt(a ->a.getValue()).sum();
+    }
+
+    private void testClassify(){
+		// Classify each instance
+        int correct = 0;
+		for (Instance instance : allInstances) {
+			String clasf = classify(instance, root);
+            System.out.println(instance.toString() + " predicted: " + clasf);
+			if (clasf.equals(instance.getCategory())) {
+				correct++;
+
+			}
+		}
+        double perctrue = correct/(double)allInstances.size();
+        System.out.println("Accuracy =" + perctrue*100 + "%");
+    }
+    private String classify(Instance i, Node n){
+        //check if leaf or split node.
+        if(n instanceof LeafNode){
+            LeafNode ln = (LeafNode)n;
+            double prob = Math.random();
+            if(ln.probability<1 && prob>ln.probability){
+                ArrayList<String> cN = new ArrayList<>();
+                cN.addAll(this.categoryNames);
+                cN.remove(ln.className);
+                return cN.get(0);
+                //return other class
+            }
+            else{
+                return ln.className;
+            }
+        }
+        if(n instanceof SplitNode){
+            SplitNode sn = (SplitNode)n;
+		    int attrNum = attNames.indexOf(sn.attName);
+		    if (i.getAtt(attrNum)) {
+			    return classify(i,sn.left);
+		    }else{return classify(i, sn.right);}
+        }
+        //if leaf node: there is a PROB chance of it being the main classification
+        return "";
     }
 }
     

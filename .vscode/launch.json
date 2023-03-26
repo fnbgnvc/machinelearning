@@ -12,10 +12,14 @@
         },
         {
             "type": "java",
-            "name": "BuildTree",
+            "name": "DecisionTree",
             "request": "launch",
-            "mainClass": "BuildTree",
-            "projectName": "machinelearning_6ada1c3c"
+            "mainClass": "DecisionTree",
+            "projectName": "machinelearning_6ada1c3c",
+            "args": [
+                "hepatitis-training.txt",
+                "hepatitis-test.txt"
+            ]
         },
         {
             "type": "java",
