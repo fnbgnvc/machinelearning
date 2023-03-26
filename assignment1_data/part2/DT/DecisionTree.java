@@ -3,11 +3,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 public class DecisionTree {
     
     int numCategories;
@@ -67,10 +64,6 @@ public class DecisionTree {
             }
             numCategories = categoryNames.size();
             System.out.println(numCategories + " categories");
-
-            for (Instance i : allInstances) {
-                System.out.println(i);
-            }
         } catch (IOException e) {
             throw new RuntimeException("Data File caused IO exception");
         }
@@ -217,30 +210,20 @@ public class DecisionTree {
         int correct = 0;
 		for (Instance instance : allInstances) {
 			String clasf = classify(instance, root);
-            System.out.println(instance.toString() + " predicted: " + clasf);
 			if (clasf.equals(instance.getCategory())) {
 				correct++;
-
 			}
 		}
         double perctrue = correct/(double)allInstances.size();
-        System.out.println("Accuracy =" + perctrue*100 + "%");
+        System.out.println("Accuracy =" + perctrue*100 + "% " + correct + "/" + allInstances.size());
     }
     private String classify(Instance i, Node n){
+        //return baselineCategory;
         //check if leaf or split node.
+        
         if(n instanceof LeafNode){
             LeafNode ln = (LeafNode)n;
-            double prob = Math.random();
-            if(ln.probability<1 && prob>ln.probability){
-                ArrayList<String> cN = new ArrayList<>();
-                cN.addAll(this.categoryNames);
-                cN.remove(ln.className);
-                return cN.get(0);
-                //return other class
-            }
-            else{
-                return ln.className;
-            }
+            return ln.className;
         }
         if(n instanceof SplitNode){
             SplitNode sn = (SplitNode)n;
@@ -249,7 +232,6 @@ public class DecisionTree {
 			    return classify(i,sn.left);
 		    }else{return classify(i, sn.right);}
         }
-        //if leaf node: there is a PROB chance of it being the main classification
         return "";
     }
 }

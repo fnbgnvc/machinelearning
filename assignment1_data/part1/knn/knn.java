@@ -3,17 +3,11 @@ package knn;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.stream.*;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.math.*;
 
 public class knn {
     ArrayList<Node> nodeList;
