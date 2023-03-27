@@ -114,7 +114,7 @@ public class DecisionTree {
                  * separate instances into 2 sets: true & false for the attribute
                  * (attributes are held in instance as list of booleans)
                  * */
-            double bestPBI = Integer.MIN_VALUE;
+            double bestPBI = Integer.MAX_VALUE;
             List<Instance> bestInstsTrue = new ArrayList<Instance>();
             List<Instance> bestInstsFalse = new ArrayList<Instance>();
             String best = baselineCategory;
@@ -127,16 +127,16 @@ public class DecisionTree {
                     }
                     else{sFalse.add(i);}
                 }
-                if(sTrue.isEmpty() || sFalse.isEmpty()){
+                if(!sTrue.isEmpty()&&!sFalse.isEmpty()){
+                    double wavg = weightedPBI(sTrue, sFalse);
+                    if(wavg<bestPBI){
+                        bestPBI = wavg;
+                        bestInstsTrue=sTrue;
+                        bestInstsFalse=sFalse;
+                        best = att;
+                    }
+                }
 
-                }
-                double wavg = weightedPBI(sTrue, sFalse);
-                if(wavg>bestPBI){
-                    bestPBI = wavg;
-                    bestInstsTrue=sTrue;
-                    bestInstsFalse=sFalse;
-                    best = att;
-                }
             }
             myAtts.remove(best);
             Node left = buildTree(bestInstsTrue, myAtts);
@@ -147,34 +147,36 @@ public class DecisionTree {
 
     
     private double weightedPBI(List<Instance> instLeft, List<Instance> instRight){
-        if(instLeft.size()==0||instRight.size()==0){
+        if(instLeft.isEmpty()||instRight.isEmpty()){
             return 0;
         }
         double totalInstance = instLeft.size()+instRight.size();
-        String cat1 = instLeft.get(0).getCategory();
-
-        double count1L = instLeft.stream().filter(a -> a.getCategory().equals(cat1)).count();
-        double count2L = instLeft.stream().filter(a -> !a.getCategory().equals(cat1)).count();
-
-        double impurityL = (count1L / (double) instLeft.size())*(count2L/(double) instLeft.size());    
-
-        double count1R = instRight.stream().filter(a -> a.getCategory().equals(cat1)).count();
-        double count2R = instRight.stream().filter(a -> !a.getCategory().equals(cat1)).count();
-
-        double impurityR = (count1R / (double) instRight.size())*(count2R/(double) instRight.size()); 
+        double impurityL = PBIone(instLeft);
+        double impurityR = PBIone(instRight);
         //weighted impurity
         double wimpL = impurityL*(instLeft.size()/totalInstance);
         double wimpR = impurityR*(instRight.size()/totalInstance);
-
-
         double wAvg = wimpL+wimpR;
         return wAvg;
 
         /* wAvg(PBI)= N(L)xPBI(L) + N(R)xPBI(R)
         * where N= #instances/#inst in parent (aka left+right)
         * and PBI = mn/(m+n)^2 (m = class A no of inst, n = class B no of inst)*/
-
     }
+
+    private double PBIone(List<Instance> insts){
+        if(allInstancesMatch(insts)){
+            return 0;
+        }
+        String cat1 = insts.get(0).getCategory();
+        double count1 = insts.stream().filter(a -> a.getCategory().equals(cat1)).count();
+        double count2 = insts.stream().filter(a -> !a.getCategory().equals(cat1)).count();
+
+        double impurity = (count1/ (double) insts.size())*(count2/(double) insts.size());    
+        return impurity;
+    }
+
+
     private boolean allInstancesMatch(List<Instance> instances){
         for(Instance i : instances){
             for(Instance j :instances){
@@ -213,12 +215,12 @@ public class DecisionTree {
 			if (clasf.equals(instance.getCategory())) {
 				correct++;
 			}
+            System.out.println("predicted: " + clasf + " actual: " + instance.getCategory());
 		}
         double perctrue = correct/(double)allInstances.size();
         System.out.println("Accuracy =" + perctrue*100 + "% " + correct + "/" + allInstances.size());
     }
     private String classify(Instance i, Node n){
-        //return baselineCategory;
         //check if leaf or split node.
         
         if(n instanceof LeafNode){

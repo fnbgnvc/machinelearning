@@ -12,6 +12,24 @@ import java.util.Collections;
 public class knn {
     ArrayList<Node> nodeList;
     ArrayList<Node> testList;
+
+    public static void main(String[] args) throws Exception{
+        
+        try{
+            if (args.length!=2){
+                throw new Error("wrong number of args");
+            }
+            String path1 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[0];
+            String path2 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[1];
+            
+            new knn().runKnn(path1, path2, 3);
+        }
+        catch(Error e){
+            e.printStackTrace();    
+            System.exit(0);}
+    }
+
+    
     public void runKnn(String training, String test, int k){
         if(k<=0){
             return;
@@ -46,7 +64,6 @@ public class knn {
         }
         System.out.println("Accuracy=" + (accuracy/(testNodes.size()))*100 + "%");
         
-        // read files
     }
 
     public ArrayList<Node> readFiles(String filename){
@@ -71,24 +88,6 @@ public class knn {
             return nodes;
     }
 
-
-    public static void main(String[] args) throws Exception{
-        
-        try{
-            if (args.length!=2){
-                throw new Error("wrong number of args");
-            }
-            String path1 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[0];
-            String path2 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[1];
-            
-            new knn().runKnn(path1, path2, 3);
-        }
-        catch(Error e){
-            e.printStackTrace();    
-            System.exit(0);}
-    }
-
-    
 
     public double[] rangeCalc(ArrayList<Node> l){
         double[] ranges = new double[l.get(0).attributes.length];

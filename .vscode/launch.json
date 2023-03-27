@@ -12,6 +12,17 @@
         },
         {
             "type": "java",
+            "name": "DT Golf",
+            "request": "launch",
+            "mainClass": "DecisionTree",
+            "projectName": "machinelearning_6ada1c3c",
+            "args": [
+                "golf-training.txt",
+                "golf-test.txt"
+            ]
+        },
+        {
+            "type": "java",
             "name": "DecisionTree",
             "request": "launch",
             "mainClass": "DecisionTree",
