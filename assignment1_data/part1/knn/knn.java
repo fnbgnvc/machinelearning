@@ -60,7 +60,7 @@ public class knn {
                 if(clasf[l]>max){max=clasf[l]; classif=l;}
             }
             if(classif==i.classification){accuracy++;}
-            
+            System.out.println("Predicted: " + classif + " Actual: " + i.classification);
         }
         System.out.println("Accuracy=" + (accuracy/(testNodes.size()))*100 + "%");
         

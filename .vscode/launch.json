@@ -6,6 +6,16 @@
     "configurations": [
         {
             "type": "java",
+            "name": "perceptron",
+            "request": "launch",
+            "mainClass": "assignment1_data.part3.perceptron",
+            "projectName": "machinelearning_6ada1c3c",
+            "args":[
+                "ionosphere.data"
+            ]
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
@@ -42,7 +52,6 @@
                 "wine-training.txt",
                 "wine-test.txt"
             ]
-            
         }
     ]
 }

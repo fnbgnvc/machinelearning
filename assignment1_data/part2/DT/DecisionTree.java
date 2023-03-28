@@ -25,12 +25,17 @@ public class DecisionTree {
         testClassify();
     }
     public static void main(String[] args){
-        if(args.length==2){
+        try{
+            if (args.length!=2){
+                throw new Error("wrong number of args");
+            }
             String trainingData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\" + args[0];
             String testData = System.getProperty("user.dir") + "\\assignment1_data\\part2\\" + args[1];
             new DecisionTree(trainingData, testData);
-
         }
+        catch(Error e){
+            e.printStackTrace();    
+            System.exit(0);}
     }
 
 
@@ -42,7 +47,6 @@ public class DecisionTree {
         System.out.println("Reading data from file " + fname);
         try {
             Scanner din = new Scanner(new File(fname));
-
             this.attNames = new ArrayList<>();
             Scanner s = new Scanner(din.nextLine());
             // Skip the "Class" attribute.
@@ -60,7 +64,6 @@ public class DecisionTree {
             categoryNames = new ArrayList<String>();
             for (Instance i : allInstances) {
                 if(!categoryNames.contains(i.category)){categoryNames.add(i.category);}
-                
             }
             numCategories = categoryNames.size();
             System.out.println(numCategories + " categories");
@@ -118,23 +121,22 @@ public class DecisionTree {
             List<Instance> bestInstsTrue = new ArrayList<Instance>();
             List<Instance> bestInstsFalse = new ArrayList<Instance>();
             String best = baselineCategory;
+            //try every remaining attribute as split
             for(String att: myAtts){
                 List<Instance> sTrue = new ArrayList<Instance>();
                 List<Instance> sFalse = new ArrayList<Instance>();
                 for(Instance i : instances){
-                    if(i.getAtt(attNames.indexOf(att))==true){
+                    if(i.getAtt(attNames.indexOf(att))&&!sTrue.contains(i)){
                         sTrue.add(i);
                     }
-                    else{sFalse.add(i);}
+                    else if(!i.getAtt(attNames.indexOf(att))&&!sFalse.contains(i)){sFalse.add(i);}
                 }
-                if(!sTrue.isEmpty()&&!sFalse.isEmpty()){
-                    double wavg = weightedPBI(sTrue, sFalse);
-                    if(wavg<bestPBI){
-                        bestPBI = wavg;
-                        bestInstsTrue=sTrue;
-                        bestInstsFalse=sFalse;
-                        best = att;
-                    }
+                double wavg = weightedPBI(sTrue, sFalse);
+                if(wavg<bestPBI){
+                    bestPBI = wavg;
+                    bestInstsTrue=sTrue;
+                    bestInstsFalse=sFalse;
+                    best = att;
                 }
 
             }
@@ -147,18 +149,15 @@ public class DecisionTree {
 
     
     private double weightedPBI(List<Instance> instLeft, List<Instance> instRight){
-        if(instLeft.isEmpty()||instRight.isEmpty()){
-            return 0;
-        }
-        double totalInstance = instLeft.size()+instRight.size();
+        double totalInstance = (double)instLeft.size()+instRight.size();
         double impurityL = PBIone(instLeft);
         double impurityR = PBIone(instRight);
         //weighted impurity
-        double wimpL = impurityL*(instLeft.size()/totalInstance);
-        double wimpR = impurityR*(instRight.size()/totalInstance);
+        double wimpL = impurityL*((double)instLeft.size()/totalInstance);
+        double wimpR = impurityR*((double)instRight.size()/totalInstance);
         double wAvg = wimpL+wimpR;
         return wAvg;
-
+        
         /* wAvg(PBI)= N(L)xPBI(L) + N(R)xPBI(R)
         * where N= #instances/#inst in parent (aka left+right)
         * and PBI = mn/(m+n)^2 (m = class A no of inst, n = class B no of inst)*/
@@ -174,6 +173,8 @@ public class DecisionTree {
 
         double impurity = (count1/ (double) insts.size())*(count2/(double) insts.size());    
         return impurity;
+
+        
     }
 
 
@@ -187,6 +188,8 @@ public class DecisionTree {
         }
         return true;
     }
+
+    
     private void baseline(){
         HashMap<String, Integer> m = new HashMap<String,Integer>();
         for(String c : categoryNames){
@@ -208,7 +211,7 @@ public class DecisionTree {
     }
 
     private void testClassify(){
-		// Classify each instance
+		// classify each instance
         int correct = 0;
 		for (Instance instance : allInstances) {
 			String clasf = classify(instance, root);
@@ -220,9 +223,10 @@ public class DecisionTree {
         double perctrue = correct/(double)allInstances.size();
         System.out.println("Accuracy =" + perctrue*100 + "% " + correct + "/" + allInstances.size());
     }
+
     private String classify(Instance i, Node n){
         //check if leaf or split node.
-        
+        //return baselineCategory;
         if(n instanceof LeafNode){
             LeafNode ln = (LeafNode)n;
             return ln.className;
