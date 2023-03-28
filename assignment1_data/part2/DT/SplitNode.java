@@ -7,6 +7,9 @@ public class SplitNode implements Node{
         left=l;
         right=r;
     }
+    /**
+     * taken from helper code given in assignment
+     */
     public void report(String indent){
         System.out.printf("%s%s = True:%n", indent, attName);
         left.report(indent+"\t");

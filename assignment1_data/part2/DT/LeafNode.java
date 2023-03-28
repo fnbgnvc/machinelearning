@@ -5,6 +5,9 @@ public class LeafNode implements Node{
         this.className=cls;
         this.probability=prob;
     }
+    /**
+     * taken from helper code given in assignment
+     */
     public void report(String indent){
         if (probability==0){ //Error-checking
         System.out.printf("%sUnknown%n", indent);
