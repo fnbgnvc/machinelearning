@@ -19,8 +19,8 @@ public class knn {
             if (args.length != 2) {
                 throw new Error("wrong number of args");
             }
-            String path1 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[0];
-            String path2 = System.getProperty("user.dir") + "\\assignment1_data\\part1\\" + args[1];
+            String path1 = System.getProperty("user.dir") + "\\part1\\" + args[0];
+            String path2 = System.getProperty("user.dir") + "\\part1\\" + args[1];
 
             new knn().runKnn(path1, path2, 3);
         } catch (Error e) {

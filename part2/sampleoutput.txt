@@ -1,0 +1,100 @@
+Reading data from file C:\Users\fiona\Desktop\assignments\2023\comp307\machinelearning\assignment1_data\part2\hepatitis-training
+16 attributes
+[AGE, FEMALE, STEROID, ANTIVIRALS, FATIGUE, MALAISE, ANOREXIA, BIGLIVER, FIRMLIVER, SPLEENPALPABLE, SPIDERS, ASCITES, VARICES, BILIRUBIN, SGOT, HISTOLOGY]
+Read 112 instances
+2 categories
+ASCITES = True:
+        SPIDERS = True:
+                VARICES = True:
+                        STEROID = True:
+                                Class live, prob=1.00
+                        STEROID = False:
+                                SPLEENPALPABLE = True:
+                                        FIRMLIVER = True:
+                                                Class live, prob=1.00
+                                        FIRMLIVER = False:
+                                                BIGLIVER = True:
+                                                        SGOT = True:
+                                                                Class live, prob=1.00
+                                                        SGOT = False:
+                                                                FEMALE = True:
+                                                                        Class live, prob=1.00
+                                                                FEMALE = False:
+                                                                        ANOREXIA = True:
+                                                                                Class die, prob=1.00
+                                                                        ANOREXIA = False:
+                                                                                Class live, prob=1.00
+                                                BIGLIVER = False:
+                                                        Class live, prob=1.00
+                                SPLEENPALPABLE = False:
+                                        ANOREXIA = True:
+                                                Class live, prob=1.00
+                                        ANOREXIA = False:
+                                                Class die, prob=1.00
+                VARICES = False:
+                        Class die, prob=1.00
+        SPIDERS = False:
+                FIRMLIVER = True:
+                        ANOREXIA = True:
+                                SGOT = True:
+                                        Class live, prob=1.00
+                                SGOT = False:
+                                        Class die, prob=1.00
+                        ANOREXIA = False:
+                                Class live, prob=1.00
+                FIRMLIVER = False:
+                        SGOT = True:
+                                BIGLIVER = True:
+                                        Class live, prob=1.00
+                                BIGLIVER = False:
+                                        Class die, prob=1.00
+                        SGOT = False:
+                                Class live, prob=1.00
+ASCITES = False:
+        BIGLIVER = True:
+                VARICES = True:
+                        FIRMLIVER = True:
+                                STEROID = True:
+                                        Class die, prob=1.00
+                                STEROID = False:
+                                        BILIRUBIN = True:
+                                                Class live, prob=1.00
+                                        BILIRUBIN = False:
+                                                Class die, prob=1.00
+                        FIRMLIVER = False:
+                                Class live, prob=1.00
+                VARICES = False:
+                        Class die, prob=1.00
+        BIGLIVER = False:
+                Class live, prob=1.00
+Reading data from file C:\Users\fiona\Desktop\assignments\2023\comp307\machinelearning\assignment1_data\part2\hepatitis-test   
+16 attributes
+[AGE, FEMALE, STEROID, ANTIVIRALS, FATIGUE, MALAISE, ANOREXIA, BIGLIVER, FIRMLIVER, SPLEENPALPABLE, SPIDERS, ASCITES, VARICES, BILIRUBIN, SGOT, HISTOLOGY]
+Read 25 instances
+2 categories
+predicted: die actual: live
+predicted: live actual: die
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: die
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: die
+predicted: live actual: die
+predicted: live actual: live
+predicted: live actual: live
+predicted: die actual: die
+predicted: live actual: live
+predicted: live actual: live
+predicted: die actual: live
+predicted: live actual: live
+predicted: live actual: live
+predicted: live actual: live
+Accuracy =76.0% 19/25

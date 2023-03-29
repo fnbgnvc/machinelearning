@@ -14,7 +14,7 @@ public class perceptron {
             if (args.length != 1) {
                 throw new Error("wrong number of args");
             }
-            String path = System.getProperty("user.dir") + "\\assignment1_data\\part3\\" + args[0];
+            String path = System.getProperty("user.dir") + "\\part3\\" + args[0];
 
             new perceptron(path);
         } catch (Error e) { 
