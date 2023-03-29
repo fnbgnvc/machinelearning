@@ -203,7 +203,7 @@ public class DecisionTree {
         double count2 = insts.stream().filter(a -> !a.getCategory().equals(cat1)).count();
 
         double impurity = (count1 / (double) insts.size()) * (count2 / (double) insts.size());
-        return impurity;
+        return impurity;   
 
     }
 

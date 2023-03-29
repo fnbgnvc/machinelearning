@@ -6,6 +6,7 @@ import java.util.*;
 public class perceptron {
     ArrayList<Instance> instances;
     double[] weights;
+    double learningRate = 0.8;
 
     public static void main(String[] args) {
         // args: name of data file
@@ -16,7 +17,7 @@ public class perceptron {
             String path = System.getProperty("user.dir") + "\\assignment1_data\\part3\\" + args[0];
 
             new perceptron(path);
-        } catch (Error e) {
+        } catch (Error e) { 
             e.printStackTrace();
             System.exit(0);
         }
@@ -36,26 +37,76 @@ public class perceptron {
      */
     perceptron(String path) {
         instances = readInstances(path);
-        trainPerceptron(instances);
+        weights = new double[instances.get(0).vars.length];
+        for(int i = 0; i<weights.length;i++){
+            weights[i]=1;
+        }
+        runPerceptron();
 
+    }
+    public void runPerceptron(){
+        trainPerceptron(instances);
+        int repeats=0;
+        double lastTest = 0;
+        while(lastTest<1 && repeats<100){
+            lastTest = testPerceptron(instances);
+            trainPerceptron(instances);
+            repeats++;
+            //System.out.println(testPerceptron(instances) + " " + repeats);
+        }
+        int incorrect = Math.toIntExact(Math.round(instances.size() - instances.size()*testPerceptron(instances)));
+        System.out.println(testPerceptron(instances) + " accuracy | " + repeats + " repeats | incorrect: " + incorrect + "/" + instances.size());
     }
 
     public void trainPerceptron(ArrayList<Instance> insts) {
         // sum of weight(i)*feature(i)>0, then true/good
         // (feature(0)=1)
+        //true-true = 1-1=0
+        //false-false = 0-0=0
+        //true-false = 1
+        //false-true = -1
+        //wi+= learningRate(class-predictedclass)xi where xi is feature[i]
         for (Instance i : insts) {
             double sum = 0;
-            for (int j = 0; j < i.vars.length; j++) {
-                sum += weights[j] + i.getVar(j);
+            sum+= weights[0];
+            for (int j = 1; j < weights.length; j++) {
+                sum += weights[j]*i.getVar(j-1);
             }
-            if (sum > 0 && i.good || sum < 0 && !i.good) {
+            if ((sum > 0 && i.good) || (sum < 0 && !i.good)) {
                 // do nothing
-            } else if (sum > 0 && !i.good) {
+            } 
+            //if actual is false and predicted is true
+            else if (sum > 0 && !i.good) {
+                weights[0]--;
+                for(int k = 1; k<weights.length;k++){
+                    weights[k]-=(learningRate*i.getVar(k-1));
+                }
                 // add feature vector to weight vector
-            } else if (sum < 0 && i.good) {
+            } 
+            //if actual is true and predicted is false: 1-0 = 1
+            else if (sum <= 0 && i.good) {
+                weights[0]++;
+                for(int k=1; k< weights.length;k++){
+                    weights[k]+=(learningRate*i.getVar(k-1));
+                }
                 // subtract feature vector from weight vector
             }
         }
+    }
+
+    public double testPerceptron(ArrayList<Instance> insts){
+        double accuracy =0;
+        for(Instance i:insts){
+            double sum = 0;
+            sum+= weights[0];
+            for (int j = 1; j < weights.length; j++) {
+                sum += weights[j]*i.getVar(j-1);
+            }
+            if ((sum > 0 && i.good) || (sum < 0 && !i.good)) {
+                accuracy++;
+            }
+        }
+        return accuracy/(double)insts.size();
     }
 
     public ArrayList<Instance> readInstances(String path) {
