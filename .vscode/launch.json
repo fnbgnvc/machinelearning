@@ -8,9 +8,19 @@
             "type": "java",
             "name": "perceptron",
             "request": "launch",
-            "mainClass": "assignment1_data.part3.perceptron",
+            "mainClass": "perceptron",
             "projectName": "machinelearning_6ada1c3c",
-            "args":[
+            "args": [
+                "ionosphere.data"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "perceptron",
+            "request": "launch",
+            "mainClass": "part3.perceptron",
+            "projectName": "machinelearning_6ada1c3c",
+            "args": [
                 "ionosphere.data"
             ]
         },

@@ -32,8 +32,8 @@ public class DecisionTree {
             if (args.length != 2) {
                 throw new Error("wrong number of args");
             }
-            String trainingData = System.getProperty("user.dir") + "\\part2\\" + args[0];
-            String testData = System.getProperty("user.dir") + "\\part2\\" + args[1];
+            String trainingData = System.getProperty("user.dir") +"\\" + args[0];
+            String testData = System.getProperty("user.dir") + "\\" + args[1];
             new DecisionTree(trainingData, testData);
         } catch (Error e) {
             e.printStackTrace();
