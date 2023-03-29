@@ -1,10 +1,10 @@
-package assignment1_data.part3;
+
 
 import java.io.*;
 import java.util.*;
 
 public class perceptron {
-    ArrayList<Instance> instances;
+    ArrayList<PInstance> instances;
     double[] weights;
     double learningRate = 0.8;
 
@@ -58,7 +58,7 @@ public class perceptron {
         System.out.println(testPerceptron(instances) + " accuracy | " + repeats + " repeats | incorrect: " + incorrect + "/" + instances.size());
     }
 
-    public void trainPerceptron(ArrayList<Instance> insts) {
+    public void trainPerceptron(ArrayList<PInstance> insts) {
         // sum of weight(i)*feature(i)>0, then true/good
         // (feature(0)=1)
         //true-true = 1-1=0
@@ -66,7 +66,7 @@ public class perceptron {
         //true-false = 1
         //false-true = -1
         //wi+= learningRate(class-predictedclass)xi where xi is feature[i]
-        for (Instance i : insts) {
+        for (PInstance i : insts) {
             double sum = 0;
             sum+= weights[0];
             for (int j = 1; j < weights.length; j++) {
@@ -94,9 +94,9 @@ public class perceptron {
         }
     }
 
-    public double testPerceptron(ArrayList<Instance> insts){
+    public double testPerceptron(ArrayList<PInstance> insts){
         double accuracy =0;
-        for(Instance i:insts){
+        for(PInstance i:insts){
             double sum = 0;
             sum+= weights[0];
             for (int j = 1; j < weights.length; j++) {
@@ -109,14 +109,14 @@ public class perceptron {
         return accuracy/(double)insts.size();
     }
 
-    public ArrayList<Instance> readInstances(String path) {
+    public ArrayList<PInstance> readInstances(String path) {
         File f = new File(path);
         try {
             Scanner s = new Scanner(f);
             s.nextLine(); // skipping labels
-            ArrayList<Instance> insts = new ArrayList<>();
+            ArrayList<PInstance> insts = new ArrayList<>();
             while (s.hasNext()) {
-                Instance n = new Instance();
+                PInstance n = new PInstance();
                 double[] atts = new double[34];
                 for (int i = 0; i < atts.length; i++) {
                     atts[i] = s.nextDouble();

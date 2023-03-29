@@ -1,9 +1,8 @@
-package assignment1_data.part3;
 
-public class Instance {
+public class PInstance {
     double[] vars;
     boolean good;
-    Instance(){}
+    PInstance(){}
     void setVars(double[] vars){this.vars=vars;}
     void setClass(boolean good){this.good=good;}
     public boolean gitGud(){return good;}
